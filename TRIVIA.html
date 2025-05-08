@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trivia Escolar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .question {
+      font-size: 20px;
+      margin: 20px 0 10px;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+    }
+    .correct {
+      background-color: #8BC34A !important;
+      color: white;
+    }
+    .incorrect {
+      background-color: #F44336 !important;
+      color: white;
+    }
+    #nextBtn {
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #nextBtn:disabled {
+      background-color: #90CAF9;
+      cursor: not-allowed;
+    }
+    #result {
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="animate__animated animate__fadeInDown">Trivia de Conocimientos Generales</h1>
+  <div id="quiz">
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+    <button id="nextBtn" disabled>Siguiente</button>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "¿Cuál es el océano más grande del mundo?",
+        options: ["Atlántico", "Índico", "Pacífico", "Ártico"],
+        answer: 2
+      },
+      {
+        question: "¿Quién escribió 'Cien años de soledad'?",
+        options: ["Mario Vargas Llosa", "Gabriel García Márquez", "Isabel Allende", "Pablo Neruda"],
+        answer: 1
+      },
+      {
+        question: "¿Cuántos planetas tiene el sistema solar?",
+        options: ["7", "8", "9", "10"],
+        answer: 1
+      },
+      {
+        question: "¿Cuál es el país más grande del mundo?",
+        options: ["Canadá", "China", "Estados Unidos", "Rusia"],
+        answer: 3
+      },
+      {
+        question: "¿Qué gas es necesario para respirar?",
+        options: ["Nitrógeno", "Hidrógeno", "Oxígeno", "Dióxido de carbono"],
+        answer: 2
+      },
+      {
+        question: "¿Qué órgano bombea sangre por el cuerpo?",
+        options: ["Pulmón", "Corazón", "Riñón", "Hígado"],
+        answer: 1
+      },
+      {
+        question: "¿En qué continente está Egipto?",
+        options: ["Asia", "Europa", "África", "Oceanía"],
+        answer: 2
+      },
+      {
+        question: "¿Cuál es el idioma más hablado en el mundo?",
+        options: ["Español", "Inglés", "Chino mandarín", "Árabe"],
+        answer: 2
+      },
+      {
+        question: "¿Qué instrumento tiene teclas blancas y negras?",
+        options: ["Guitarra", "Piano", "Violín", "Flauta"],
+        answer: 1
+      },
+      {
+        question: "¿Cuántos lados tiene un hexágono?",
+        options: ["5", "6", "7", "8"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    const questionDiv = document.getElementById("question");
+    const optionsDiv = document.getElementById("options");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultDiv = document.getElementById("result");
+
+    function showQuestion(index) {
+      const q = questions[index];
+      questionDiv.textContent = `Pregunta ${index + 1}: ${q.question}`;
+      optionsDiv.innerHTML = "";
+      nextBtn.disabled = true;
+
+      q.options.forEach((option, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, i, q.answer);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function selectOption(button, selectedIndex, correctIndex) {
+      const buttons = optionsDiv.querySelectorAll("button");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correctIndex) btn.classList.add("correct");
+        if (i === selectedIndex && i !== correctIndex) btn.classList.add("incorrect");
+      });
+
+      if (selectedIndex === correctIndex) score++;
+      nextBtn.disabled = false;
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        showResult();
+      }
+    };
+
+    function showResult() {
+      quiz.style.display = "none";
+      let feedback = "";
+      if (score === 10) feedback = "¡Excelente! ¡Obtuviste todas correctas!";
+      else if (score >= 7) feedback = "¡Muy bien! Sabes bastante.";
+      else if (score >= 4) feedback = "Bien hecho, pero puedes mejorar.";
+      else feedback = "Necesitas repasar un poco más.";
+
+      resultDiv.innerHTML = `
+        <h2 class="animate__animated animate__zoomIn">Puntaje final: ${score}/10</h2>
+        <p>${feedback}</p>
+      `;
+    }
+
+    showQuestion(currentQuestion);
+  </script>
+</body>
+</html>
